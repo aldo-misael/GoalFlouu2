@@ -1,0 +1,260 @@
+/* ===== Fuente moderna ===== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #121212;
+  color: #fff;
+  min-height: 100vh;
+}
+
+/* ===== Header ===== */
+header {
+  background: linear-gradient(90deg, #ffb347, #ffcc33);
+  padding: 20px 0;
+  text-align: center;
+  color: #121212;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  border-radius: 0 0 15px 15px;
+}
+
+/* ===== Menú / Navegación ===== */
+nav {
+  display: flex;
+  justify-content: center;
+  background-color: #1f1f1f;
+  padding: 12px 0;
+  border-radius: 15px;
+  margin: 20px auto;
+  max-width: 950px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+nav a {
+  text-decoration: none;
+  color: #ffcc33;
+  font-weight: 600;
+  padding: 12px 25px;
+  margin: 0 12px;
+  border-radius: 12px;
+  transition: 0.3s;
+}
+
+nav a:hover {
+  background: linear-gradient(90deg, #ff9800, #ffcc33);
+  color: #121212;
+  transform: scale(1.05);
+}
+
+/* ===== Secciones / tarjetas ===== */
+section {
+  max-width: 950px;
+  margin: 20px auto;
+  padding: 25px 35px;
+  background-color: #1f1f1f;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+  overflow-x: auto;
+  transition: transform 0.3s;
+}
+
+section:hover {
+  transform: translateY(-5px);
+}
+
+/* ===== Tablas modernas ===== */
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-bottom: 20px;
+  min-width: 800px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+th,
+td {
+  padding: 12px;
+  text-align: center;
+
+}
+
+th {
+  /* Fondo más ligero con alpha para no saturar */
+  background: rgba(255, 204, 51, 0.2);
+  /* amarillo transparente */
+  color: #ffcc33;
+  font-weight: 600;
+  padding: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+td {
+  background-color: #2a2a2a;
+  border-bottom: 1px solid #333;
+  border-right: 1px solid #333;
+  padding: 10px;
+  text-align: center;
+}
+
+td:last-child {
+  border-right: none;
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+td input[type="text"] {
+  width: 90%;
+  padding: 6px 10px;
+  border: 1px solid #444;
+  /* borde suave */
+  border-radius: 8px;
+  /* esquinas redondeadas */
+  background-color: #1f1f1f;
+  /* fondo oscuro */
+  color: #ffcc33;
+  /* texto amarillo */
+  text-align: center;
+  transition: 0.3s;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  /* sombra sutil */
+}
+
+td input[type="text"]:focus {
+  border-color: #ff9800;
+  box-shadow: 0 0 6px #ff9800aa inset;
+  outline: none;
+  background-color: #2a2a2a;
+}
+
+input[type="text"] {
+  width: 90%;
+  padding: 6px 10px;
+  border: 1px solid #444;
+  border-radius: 8px;
+  background-color: #121212;
+  color: #fff;
+  transition: 0.3s;
+}
+
+input[type="text"]:focus {
+  border-color: #ff9800;
+  box-shadow: 0 0 5px #ff9800aa;
+}
+
+/* ===== Botones modernos con gradiente ===== */
+button {
+  background: linear-gradient(90deg, #ffcc33, #ff9800);
+  border: none;
+  color: #121212;
+  padding: 14px 32px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: 0.4s;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+button:hover {
+  background: linear-gradient(90deg, #ff9800, #ffcc33);
+  transform: scale(1.05);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.6);
+}
+
+/* ===== Checkboxes estilizados ===== */
+label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+input[type="checkbox"] {
+  transform: scale(1.4);
+  margin-right: 12px;
+  accent-color: #ffcc33;
+  cursor: pointer;
+}
+
+/* ===== Output / progreso ===== */
+#output {
+  margin-top: 20px;
+  font-weight: 700;
+  color: #ffcc33;
+  text-align: center;
+  font-size: 1.15rem;
+}
+
+/* ===== Responsive ===== */
+@media screen and (max-width: 600px) {
+  nav {
+    flex-direction: column;
+  }
+
+  nav a {
+    margin: 5px 0;
+  }
+}
+
+
+#plan-hoy {
+  background-color: #111;
+  /* fondo oscuro */
+  padding: 20px;
+  border-radius: 10px;
+  color: #ffcc33;
+  max-width: 600px;
+  margin: 20px auto;
+}
+
+#plan-hoy h2 {
+  margin-bottom: 20px;
+  text-align: left;
+  font-family: 'Arial', sans-serif;
+  /* o la fuente que prefieras */
+}
+
+#plan-hoy div {
+  margin-bottom: 20px;
+  /* espacio entre comidas y ejercicios */
+  color: #fff;
+}
+
+#plan-hoy label {
+  display: block;
+  margin-bottom: 10px;
+  /* espacio entre cada checkbox */
+  font-size: 1rem;
+}
+
+#plan-hoy button {
+  display: block;
+  margin: 20px auto 0 auto;
+  padding: 10px 20px;
+  background: linear-gradient(90deg, #ffcc33, #ffaa00);
+  border: none;
+  border-radius: 8px;
+  color: #111;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#plan-hoy button:hover {
+  opacity: 0.9;
+}

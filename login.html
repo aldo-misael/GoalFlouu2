@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoalFlouu - Login</title>
+    <link rel="icon" href="fuego.ico" type="image/x-icon">
+
+    <!-- Fuente Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sacramento&display=swap" rel="stylesheet">
+
+    <style>
+        /* ===== ESTILOS ===== */
+        body {
+            background-color: #111;
+            color: #ffcc33;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #login-container {
+            background-color: #1a1a1a;
+            padding: 40px 30px;
+            border-radius: 12px;
+            text-align: center;
+            width: 320px;
+        }
+
+        #login-container h1 {
+            font-family: 'Sacramento', cursive;
+            font-size: 3rem;
+            margin-bottom: 30px;
+            background: linear-gradient(90deg, #ffcc33, #ffaa00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        #login-form input {
+            display: block;
+            width: 100%;
+            /* O puedes poner 80% si quieres margen lateral */
+            max-width: 260px;
+            /* limita el ancho máximo */
+            margin: 0 auto 15px auto;
+            /* centro horizontalmente y margen inferior */
+            padding: 12px 10px;
+            border-radius: 8px;
+            border: none;
+            font-size: 1rem;
+            text-align: center;
+            /* centra el texto dentro del input */
+        }
+
+        #login-form button {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(90deg, #ffcc33, #ffaa00);
+            color: #111;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        #login-form button:hover {
+            opacity: 0.9;
+        }
+
+        #error-msg {
+            color: #ff5555;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <section id="login-container">
+        <h1>GoalFlouu</h1>
+        <div id="login-form">
+            <input type="email" id="email" placeholder="Correo electrónico">
+            <input type="password" id="password" placeholder="Contraseña">
+            <button id="btn-login">Iniciar sesión</button>
+            <p id="error-msg"></p>
+        </div>
+    </section>
+
+    <script type="module">
+        /* ===== JS ===== */
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-auth.js";
+
+        // Configuración Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyC6s4RHJm5HSNQgOEy-lIQ_zpHyW_Qc5-o",
+            authDomain: "goalflouu.firebaseapp.com",
+            projectId: "goalflouu",
+            storageBucket: "goalflouu.firebasestorage.app",
+            messagingSenderId: "916018616079",
+            appId: "1:916018616079:web:81604cf8999fda77dad07a"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Elementos
+        const emailInput = document.getElementById("email");
+        const passwordInput = document.getElementById("password");
+        const btnLogin = document.getElementById("btn-login");
+        const errorMsg = document.getElementById("error-msg");
+
+        // Recordar usuario
+        if (localStorage.getItem("usuario")) {
+            emailInput.value = localStorage.getItem("usuario");
+        }
+
+        // Login
+        btnLogin.addEventListener("click", async () => {
+            const email = emailInput.value.trim();
+            const pass = passwordInput.value.trim();
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+                localStorage.setItem("usuario", email);
+                window.location.href = "index.html"; // redirige a la app principal
+            } catch (err) {
+                errorMsg.textContent = err.message;
+            }
+        });
+
+        // Mantener sesión activa
+        onAuthStateChanged(auth, user => {
+            if (user) {
+                localStorage.setItem("usuario", user.email);
+                window.location.href = "index.html";
+            }
+        });
+    </script>
+</body>
+
+</html>
