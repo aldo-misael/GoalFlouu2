@@ -10,6 +10,7 @@ const ejerciciosDiv = document.getElementById("ejercicios");
 // Obtener hora actual en formato HH:MM
 function horaActual() {
   const now = new Date();
+  Console.log(now);
   return now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
 }
 
@@ -136,4 +137,5 @@ document.getElementById("guardar-checks").addEventListener("click", async () => 
 });
 
 cargarPlanHoy();
+
 
