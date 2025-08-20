@@ -22,13 +22,12 @@ export function getDiaSemana() {
   return day === 0 ? 7 : day; // Ajustar a 1-7
 }
 
-// Fecha YYYY-MM-DD en hora local
+// Fecha YYYY-MM-DD (hora local del usuario)
 export function getFechaHoy() {
-  const hoy = new Date();
-  const year = hoy.getFullYear();
-  const month = String(hoy.getMonth() + 1).padStart(2, "0");
-  const day = String(hoy.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
+  const tzOffset = new Date().getTimezoneOffset() * 60000; // diferencia en ms
+  const localISO = new Date(Date.now() - tzOffset).toISOString().split("T")[0];
+  return localISO;
 }
+
 
 
