@@ -16,6 +16,7 @@ function horaActual() {
 // ===== Función para cargar plan del día =====
 async function cargarPlanHoy() {
   const horaNow = horaActual();
+  console.log(horaNow);
   
   // ===== DIETA =====
   const dietaRef = doc(db, "dieta", "semana1");
@@ -136,6 +137,7 @@ document.getElementById("guardar-checks").addEventListener("click", async () => 
 });
 
 cargarPlanHoy();
+
 
 
 
