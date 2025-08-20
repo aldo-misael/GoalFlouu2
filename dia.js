@@ -44,6 +44,7 @@ async function cargarPlanHoy() {
   }
 
   // ===== Crear checkeos del día si no existen =====
+  console.log(fecha);
   const checkRef = doc(db, "checkeos", fecha);
   const checkSnap = await getDoc(checkRef);
   if (!checkSnap.exists()) {
@@ -135,3 +136,4 @@ document.getElementById("guardar-checks").addEventListener("click", async () => 
 });
 
 cargarPlanHoy();
+
