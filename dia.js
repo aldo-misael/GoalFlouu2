@@ -10,14 +10,14 @@ const ejerciciosDiv = document.getElementById("ejercicios");
 // Obtener hora actual en formato HH:MM
 function horaActual() {
   const now = new Date();
-  Console.log(now);
   return now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
 }
 
 // ===== Función para cargar plan del día =====
 async function cargarPlanHoy() {
   const horaNow = horaActual();
-
+  console.log(horaNow);
+  
   // ===== DIETA =====
   const dietaRef = doc(db, "dieta", "semana1");
   const dietaSnap = await getDoc(dietaRef);
@@ -137,5 +137,6 @@ document.getElementById("guardar-checks").addEventListener("click", async () => 
 });
 
 cargarPlanHoy();
+
 
 
