@@ -22,7 +22,13 @@ export function getDiaSemana() {
   return day === 0 ? 7 : day; // Ajustar a 1-7
 }
 
-// Fecha YYYY-MM-DD
+// Fecha YYYY-MM-DD en hora local
 export function getFechaHoy() {
-  return new Date().toISOString().split("T")[0];
+  const hoy = new Date();
+  const year = hoy.getFullYear();
+  const month = String(hoy.getMonth() + 1).padStart(2, "0");
+  const day = String(hoy.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
+
+
