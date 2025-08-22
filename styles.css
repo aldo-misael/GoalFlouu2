@@ -31,6 +31,8 @@ header {
 nav {
   display: flex;
   justify-content: center;
+  gap: 20px; /* espacio entre enlaces */
+  flex-wrap: wrap; /* permite que se muevan a otra línea si no cabe */
   background-color: #1f1f1f;
   padding: 12px 0;
   border-radius: 15px;
@@ -44,11 +46,8 @@ nav a {
   color: #ffcc33;
   font-weight: 600;
   padding: 12px 25px;
-  margin: 0 12px;
   border-radius: 12px;
   transition: 0.3s;
-  gap: 20px;
-  flex-wrap: wrap;
 }
 
 nav a:hover {
@@ -261,3 +260,4 @@ input[type="checkbox"] {
   opacity: 0.9;
 
 }
+
