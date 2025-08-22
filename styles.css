@@ -47,6 +47,8 @@ nav a {
   margin: 0 12px;
   border-radius: 12px;
   transition: 0.3s;
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
 nav a:hover {
@@ -257,4 +259,5 @@ input[type="checkbox"] {
 
 #plan-hoy button:hover, #plan-dia button:hover {
   opacity: 0.9;
+
 }
