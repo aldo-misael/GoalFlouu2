@@ -213,7 +213,7 @@ input[type="checkbox"] {
 }
 
 
-#plan-hoy {
+#plan-hoy, #plan-dia {
   background-color: #111;
   /* fondo oscuro */
   padding: 20px;
@@ -223,27 +223,27 @@ input[type="checkbox"] {
   margin: 20px auto;
 }
 
-#plan-hoy h2 {
+#plan-hoy h2, #plan-dia h2 {
   margin-bottom: 20px;
   text-align: left;
   font-family: 'Arial', sans-serif;
   /* o la fuente que prefieras */
 }
 
-#plan-hoy div {
+#plan-hoy div, #plan-dia div {
   margin-bottom: 20px;
   /* espacio entre comidas y ejercicios */
   color: #fff;
 }
 
-#plan-hoy label {
+#plan-hoy label, #plan-dia label {
   display: block;
   margin-bottom: 10px;
   /* espacio entre cada checkbox */
   font-size: 1rem;
 }
 
-#plan-hoy button {
+#plan-hoy button, #plan-dia button {
   display: block;
   margin: 20px auto 0 auto;
   padding: 10px 20px;
@@ -255,6 +255,6 @@ input[type="checkbox"] {
   cursor: pointer;
 }
 
-#plan-hoy button:hover {
+#plan-hoy button:hover, #plan-dia button:hover {
   opacity: 0.9;
 }

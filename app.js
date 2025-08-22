@@ -1,5 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-app.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-auth.js";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -13,6 +14,15 @@ const firebaseConfig = {
 
 export const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
+const auth = getAuth();
+
+onAuthStateChanged(auth, user => {
+  if (!user) {
+    // Redirigir a login si no hay sesión
+    window.location.href = "index.html";
+  }
+  // Si hay sesión, puedes inicializar tus funciones
+});
 
 // Función utilitaria: obtener día actual (1=lunes,...,7=domingo)
 export function getDiaSemana() {
@@ -24,14 +34,9 @@ export function getDiaSemana() {
   return day === 0 ? 7 : day;   // Ajustar a 1-7 (lunes=1,...,domingo=7)
 }
 
-
 // Fecha YYYY-MM-DD (hora local del usuario)
 export function getFechaHoy() {
   const tzOffset = new Date().getTimezoneOffset() * 60000; // diferencia en ms
   const localISO = new Date(Date.now() - tzOffset).toISOString().split("T")[0];
   return localISO;
 }
-
-
-
-
