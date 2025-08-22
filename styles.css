@@ -27,35 +27,6 @@ header {
   border-radius: 0 0 15px 15px;
 }
 
-/* ===== Menú / Navegación ===== */
-nav {
-  display: flex;
-  justify-content: center;
-  gap: 20px; /* espacio entre enlaces */
-  flex-wrap: wrap; /* permite que se muevan a otra línea si no cabe */
-  background-color: #1f1f1f;
-  padding: 12px 0;
-  border-radius: 15px;
-  margin: 20px auto;
-  max-width: 950px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
-
-nav a {
-  text-decoration: none;
-  color: #ffcc33;
-  font-weight: 600;
-  padding: 12px 25px;
-  border-radius: 12px;
-  transition: 0.3s;
-}
-
-nav a:hover {
-  background: linear-gradient(90deg, #ff9800, #ffcc33);
-  color: #121212;
-  transform: scale(1.05);
-}
-
 /* ===== Secciones / tarjetas ===== */
 section {
   max-width: 950px;
@@ -260,4 +231,5 @@ input[type="checkbox"] {
   opacity: 0.9;
 
 }
+
 
