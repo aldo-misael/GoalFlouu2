@@ -8,10 +8,12 @@ const comidasDiv = document.getElementById("comidas");
 const ejerciciosDiv = document.getElementById("ejercicios");
 const tecnicasDiv = document.getElementById("tecnicas");
 const creatinaDiv = document.getElementById("creatina");
+const dormirDiv = document.getElementById("dormir");
 const comidasHoyDiv = document.getElementById("comidas2");
 const ejerciciosHoyDiv = document.getElementById("ejercicios2");
 const tecnicasHoyDiv = document.getElementById("tecnicas2");
 const creatinaHoyDiv = document.getElementById("creatina2");
+const dormirHoyDiv = document.getElementById("dormir2");
 
 // Obtener hora actual en formato HH:MM
 function horaActual() {
@@ -66,7 +68,7 @@ async function cargarPlanHoy() {
   const checkRef = doc(db, "checkeos", fecha);
   const checkSnap = await getDoc(checkRef);
   if (!checkSnap.exists()) {
-    let registroInit = { comidas: {}, ejercicios: {}, agua: {}, pnl: {}, creatina: {} };
+    let registroInit = { comidas: {}, ejercicios: {}, agua: {}, pnl: {}, creatina: {}, dormir: {} };
     dietaHoy.forEach((cObj, i) => {
       registroInit.comidas[`c${i + 1}`] = false;
     });
@@ -78,7 +80,20 @@ async function cargarPlanHoy() {
       console.log(registroInit.pnl[`p${i + 1}`]);
     });
     registroInit.creatina = { k: false };
+    registroInit.dormir = { d: false };
     await setDoc(checkRef, registroInit);
+  }
+
+  //Lottie progreso
+  const checkS = await getDoc(checkRef);
+  if (checkS.exists()) {
+    const checks = checkS.data();
+    let progresoDiario = calcularProgresoDiario(checks);
+
+    //Reproducir lottiefile
+    reproducirLottieHasta("lottie-1", "carga2.json", progresoDiario);
+    reproducirLottieHasta("lottie-2", "carga1.json", 100);
+    reproducirLottieHasta("lottie-3", "carga.json", 100);
   }
 
   // ===== Mostrar solo la comida correspondiente a la hora actual =====
@@ -129,6 +144,12 @@ async function cargarPlanHoy() {
   htmlK += `<label><input type="checkbox" id="k"> 3–5 g diarios, idealmente con tu batido post-entrenamiento o con algún carbohidrato para mejorar la absorción</label>`;
   creatinaDiv.innerHTML = htmlK;
 
+  // ===== Mostrar dormir todo el día =====
+  let htmlD = "<h3>Dormir</h3>";
+  htmlD += `<label><input type="checkbox" id="d"> Dormir 7 horas al día.</label>`;
+  dormirDiv.innerHTML = htmlD;
+
+
   // ===== Cargar checkeos previos solo de lo mostrado =====
   const checkSnap2 = await getDoc(checkRef);
   if (checkSnap2.exists()) {
@@ -149,6 +170,8 @@ async function cargarPlanHoy() {
     }
     //creatina
     if (document.getElementById("k")) document.getElementById("k").checked = checks.creatina.k || false;
+    //dormir
+    if (document.getElementById("d")) document.getElementById("d").checked = checks.dormir.d || false;
   }
 
   //PLAN DEL DIA-
@@ -160,41 +183,46 @@ async function cargarPlanHoy() {
     // ===== Mostrar dieta del día de hoy =====
     let htmlComidas2 = "<h3>Comida</h3>";
     for (let i = 0; i < dietaHoy.length; i++) {
-      let checkEmoji = obtenerCheckEmoji(horaMenosUna,dietaHoy[i].hora,checks.comidas[`c${i + 1}`]);
+      let checkEmoji = obtenerCheckEmoji(horaMenosUna, dietaHoy[i].hora, checks.comidas[`c${i + 1}`]);
       htmlComidas2 += `<label>🔸 ${dietaHoy[i].hora} - ${dietaHoy[i].alimento} ${checkEmoji}</label>`;
     }
     comidasHoyDiv.innerHTML = htmlComidas2;
 
     // ===== Mostrar ejercicio del día de hoy =====
     let htmlEjercicios2 = "<h3>Ejercicio</h3>";
-    let checkEmoji = obtenerCheckEmoji(horaMenosUna,ejHoy.hora,checks.ejercicios.ej);
+    let checkEmoji = obtenerCheckEmoji(horaMenosUna, ejHoy.hora, checks.ejercicios.ej);
     htmlEjercicios2 += `<label>🔸 ${ejHoy.hora} - ${ejHoy.ej} ${checkEmoji}</label>`;
-    checkEmoji = obtenerCheckEmoji(horaMenosUna,ejHoy.hora,checks.ejercicios.rec);
+    checkEmoji = obtenerCheckEmoji(horaMenosUna, ejHoy.hora, checks.ejercicios.rec);
     htmlEjercicios2 += `<label>🔸 ${ejHoy.hora} - ${ejHoy.rec} ${checkEmoji}</label>`;
     ejerciciosHoyDiv.innerHTML = htmlEjercicios2;
 
     // ===== Mostrar tecnicas del día de hoy =====
     let htmlTecnicas2 = "<h3>Visualizaciones</h3>";
     for (let i = 0; i < pnlHoy.length; i++) {
-      let checkEmoji = obtenerCheckEmoji(horaMenosUna,pnlHoy[i].hora,checks.pnl[`p${i + 1}`]);
+      let checkEmoji = obtenerCheckEmoji(horaMenosUna, pnlHoy[i].hora, checks.pnl[`p${i + 1}`]);
       htmlTecnicas2 += `<label>🔸 ${pnlHoy[i].hora} - ${pnlHoy[i].tecnica} ${checkEmoji}</label>`;
     }
     tecnicasHoyDiv.innerHTML = htmlTecnicas2;
 
     // ===== Mostrar Creatina del día de hoy =====
     let htmlCreatina2 = "<h3>Creatina</h3>";
-    checkEmoji = obtenerCheckEmoji(horaMenosUna,"00:00",checks.creatina.k);
+    checkEmoji = obtenerCheckEmoji(horaMenosUna, "00:00", checks.creatina.k);
     htmlCreatina2 += `<label>🔸 3–5 g diarios, idealmente con tu batido post-entrenamiento o con algún carbohidrato para mejorar la absorción ${checkEmoji}</ label>`;
     creatinaHoyDiv.innerHTML = htmlCreatina2;
-    
-  }
 
+    // ===== Mostrar Dormir del día de hoy =====
+    let htmlD2 = "<h3>Dormir</h3>";
+    checkEmoji = obtenerCheckEmoji(horaMenosUna, "00:00", checks.dormir.d);
+    htmlD2 += `<label>🔸 Dormir 7 horas al día. ${checkEmoji}</ label>`;
+    dormirHoyDiv.innerHTML = htmlD2;
+
+  }
 }
 
 function obtenerCheckEmoji(horaActual, horaObjetivo, estadoEjercicio) {
   return !estadoEjercicio
-           ? (horaActual >= horaObjetivo ? "❌" : "")
-           : "✅";
+    ? (horaActual >= horaObjetivo ? "❌" : "")
+    : "✅";
 }
 
 // ===== Guardar solo lo mostrado =====
@@ -238,6 +266,10 @@ document.getElementById("guardar-checks").addEventListener("click", async () => 
   // Solo actualizar item creatina
   const kInput = document.getElementById("k");
   if (kInput) updates["creatina.k"] = kInput.checked;
+  
+  // Solo actualizar item dormir
+  const dInput = document.getElementById("d");
+  if (dInput) updates["dormir.d"] = dInput.checked;
 
   // 🔥 Esto actualiza SOLO las propiedades específicas
   await updateDoc(checkRef, updates);
@@ -245,4 +277,66 @@ document.getElementById("guardar-checks").addEventListener("click", async () => 
   alert("Progreso guardado ✅");
 });
 
+function reproducirLottieHasta(containerId, jsonPath, porcentaje) {
+  const animation = lottie.loadAnimation({
+    container: document.getElementById(containerId),
+    renderer: "svg",
+    loop: false,
+    autoplay: false,
+    path: jsonPath
+  });
+
+  animation.addEventListener("DOMLoaded", () => {
+    animation.setSpeed(2);
+    const targetFrame = porcentaje * 2.5;
+
+    animation.play();
+
+    animation.addEventListener("enterFrame", function detener(e) {
+      if (e.currentTime >= targetFrame + 1) {
+        animation.goToAndStop(targetFrame, true);
+        animation.removeEventListener("enterFrame", detener);
+      }
+    });
+  });
+}
+
+function calcularProgresoDiario(checks) {
+  let progresoDiario = 0;
+  let progreso = 0;
+  let tareas = 0;
+  
+  //Calculo de ejercicio 30%
+  if(checks.ejercicios.ej) progresoDiario += 30;
+
+  //Calculo de comidas  25%
+  for (let i = 0; i <= 6; i++) {
+    if (checks.comidas[`c${i}`]) tareas++;
+  }
+  progreso = (tareas * 25) / 6;
+  progresoDiario += progreso;
+  
+  //Calculo de dormir 20%
+  if(checks.dormir.d) progresoDiario += 20;
+
+  //Calculo de creatina 7%
+  if(checks.creatina.k) progresoDiario += 7;
+
+  //Calculo de hidratacion 10%
+  tareas = 0;
+  for (let i = 0; i <= 6; i++) {
+    if (checks.agua[`vs${i}`]) tareas++;
+  }
+  progreso = (tareas * 10) / 6;
+  progresoDiario += progreso;
+
+  //Calculo de visualizaciones 5%
+  if(checks.pnl[`p${1}`]) progresoDiario += 2.5;
+  if(checks.pnl[`p${2}`]) progresoDiario += 2.5;
+  
+  //Calculo de recuperacion 3%
+  if(checks.ejercicios.rec) progresoDiario += 3;
+
+  return progresoDiario;
+}
 cargarPlanHoy();

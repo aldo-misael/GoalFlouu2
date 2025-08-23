@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <title>GoalFlouu</title>
@@ -9,6 +10,7 @@
   <style>
     /* ===== Menú / Navegación ===== */
     nav {
+
       display: flex;
       flex-direction: row;
       flex-wrap: wrap;
@@ -38,12 +40,29 @@
     }
   </style>
 </head>
+
 <body>
   <nav>
-    <a href="dieta.html">Dieta</a> 
+    <a href="dieta.html">Dieta</a>
     <a href="ejercicio.html">Ejercicio</a>
     <a href="pnl.html">PNL</a>
   </nav>
+
+  <section id="progreso">
+    <div class="lottie-wrapper">
+      <div class="lottie-container" id="lottie-1"></div>
+      <p class="lottie-label">Progreso de hoy</p>
+    </div>
+    <div class="lottie-wrapper">
+      <div class="lottie-container" id="lottie-2"></div>
+      <p class="lottie-label">Progreso semanal</p>
+    </div>
+    <div class="lottie-wrapper">
+      <div class="lottie-container" id="lottie-3"></div>
+      <p class="lottie-label">Progreso mensual</p>
+    </div>
+  </section>
+
 
   <section id="plan-hoy">
     <h2>Lo que toca ahora!</h2>
@@ -51,6 +70,7 @@
     <div id="ejercicios"></div>
     <div id="tecnicas"></div>
     <div id="creatina"></div>
+    <div id="dormir"></div>
     <button id="guardar-checks">Guardar progreso</button>
   </section>
 
@@ -60,13 +80,16 @@
     <div id="ejercicios2"></div>
     <div id="tecnicas2"></div>
     <div id="creatina2"></div>
+    <div id="dormir2"></div>
+    <button id="guardar-checks">Guardar progreso</button>
   </section>
 
   <script type="module" src="app.js"></script>
   <script type="module" src="dia.js"></script>
+  <!-- Incluye la librería -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.0/lottie.min.js"></script>
+  </script>
+
 </body>
+
 </html>
-
-
-
-
