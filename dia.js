@@ -90,10 +90,16 @@ async function cargarPlanHoy() {
     const checks = checkS.data();
     let progresoDiario = calcularProgresoDiario(checks);
 
-    //Reproducir lottiefile
-    reproducirLottieHasta("lottie-1", "carga2.json", progresoDiario);
-    reproducirLottieHasta("lottie-2", "carga1.json", 100);
-    reproducirLottieHasta("lottie-3", "carga.json", 100);
+    let fechas = obtenerFechasSemanaHasta("2025-09-02");
+    let progresoSemanal = await calcularProgresoSemanal(fechas);
+
+    crearLottie("lottie-1", "carga2.json");
+    reproducirHasta("lottie-1", progresoDiario);
+    console.log(progresoSemanal);
+
+    crearLottie("lottie-2", "carga1.json");
+    reproducirHasta("lottie-2", progresoSemanal);
+    //reproducirLottieHasta("lottie-3", "carga.json", 100);
   }
 
   // ===== Mostrar solo la comida correspondiente a la hora actual =====
@@ -275,30 +281,56 @@ document.getElementById("guardar-checks").addEventListener("click", async () => 
   await updateDoc(checkRef, updates);
 
   alert("Progreso guardado ✅");
+
+  //Lottie progreso
+  const checkS = await getDoc(checkRef);
+  if (checkS.exists()) {
+    const checks = checkS.data();
+    let progresoDiario = calcularProgresoDiario(checks);
+    
+    let fechas = obtenerFechasSemanaHasta("2025-09-02");
+    let progresoSemanal = await calcularProgresoSemanal(fechas);
+
+    reproducirHasta("lottie-1", progresoDiario);
+    reproducirHasta("lottie-2", progresoSemanal);
+  }
 });
 
-function reproducirLottieHasta(containerId, jsonPath, porcentaje) {
+const lottieInstances = {};
+function crearLottie(containerId, jsonPath) {
+  const container = document.getElementById(containerId);
+
   const animation = lottie.loadAnimation({
-    container: document.getElementById(containerId),
+    container,
     renderer: "svg",
     loop: false,
     autoplay: false,
     path: jsonPath
   });
 
-  animation.addEventListener("DOMLoaded", () => {
-    animation.setSpeed(2);
-    const targetFrame = porcentaje * 2.5;
+  lottieInstances[containerId] = animation;
+}
 
-    animation.play();
+function reproducirHasta(containerId, porcentaje) {
+  const animation = lottieInstances[containerId];
+  if (!animation) {
+    console.warn(`No se encontró animación para ${containerId}`);
+    return;
+  }
 
-    animation.addEventListener("enterFrame", function detener(e) {
-      if (e.currentTime >= targetFrame + 1) {
-        animation.goToAndStop(targetFrame, true);
-        animation.removeEventListener("enterFrame", detener);
-      }
-    });
-  });
+  const targetFrame = porcentaje * 2.5;
+  animation.stop();
+  animation.setSpeed(2);
+  animation.play();
+
+  const detener = (e) => {
+    if (e.currentTime >= targetFrame + 1) {
+      animation.goToAndStop(targetFrame, true);
+      animation.removeEventListener("enterFrame", detener);
+    }
+  };
+
+  animation.addEventListener("enterFrame", detener);
 }
 
 function calcularProgresoDiario(checks) {
@@ -339,4 +371,43 @@ function calcularProgresoDiario(checks) {
 
   return progresoDiario;
 }
+
+async function calcularProgresoSemanal(fechas) {
+  let progresoSemanal = 0;
+  for (let i = 0; i < fechas.length; i++) {
+    console.log(fechas[i]);
+    const checkRef = doc(db, "checkeos", fechas[i]);
+    const checkS = await getDoc(checkRef);
+    if (checkS.exists()) {
+      const checks = checkS.data();
+      let progresoDiario = calcularProgresoDiario(checks);
+      console.log(progresoDiario);
+      progresoSemanal += progresoDiario;
+    }
+  }
+  progresoSemanal = progresoSemanal/fechas.length;
+  return progresoSemanal;
+}
+
+function obtenerFechasSemanaHasta(fechaReferencia) {
+  const fechaBase = new Date(fechaReferencia);
+  const diaSemana = fechaBase.getDay(); // 0 = domingo, 1 = lunes, ..., 6 = sábado
+  const diasDesdeLunes = diaSemana === 0 ? 6 : diaSemana - 1;
+
+  const fechas = [];
+
+  for (let i = 0; i <= diasDesdeLunes+1; i++) {
+    const f = new Date(fechaBase); // Clon en cada iteración
+    f.setDate(fechaBase.getDate() - diasDesdeLunes + i);
+
+    const yyyy = f.getFullYear();
+    const mm = String(f.getMonth() + 1).padStart(2, '0');
+    const dd = String(f.getDate()).padStart(2, '0');
+
+    fechas.push(`${yyyy}-${mm}-${dd}`);
+  }
+
+  return fechas;
+}
+
 cargarPlanHoy();
