@@ -90,7 +90,7 @@ async function cargarPlanHoy() {
     const checks = checkS.data();
     let progresoDiario = calcularProgresoDiario(checks);
 
-    let fechas = obtenerFechasSemanaHasta("2025-09-02");
+    let fechas = obtenerFechasSemanaHasta(fecha);
     let progresoSemanal = await calcularProgresoSemanal(fechas);
 
     crearLottie("lottie-1", "carga2.json");
@@ -288,7 +288,7 @@ document.getElementById("guardar-checks").addEventListener("click", async () => 
     const checks = checkS.data();
     let progresoDiario = calcularProgresoDiario(checks);
     
-    let fechas = obtenerFechasSemanaHasta("2025-09-02");
+    let fechas = obtenerFechasSemanaHasta(fecha);
     let progresoSemanal = await calcularProgresoSemanal(fechas);
 
     reproducirHasta("lottie-1", progresoDiario);
@@ -411,3 +411,4 @@ function obtenerFechasSemanaHasta(fechaReferencia) {
 }
 
 cargarPlanHoy();
+
