@@ -426,7 +426,7 @@ async function graficoProms(progresos) {
     const options = {
       chart: {
         type: 'area',
-        background: '#000'
+        background: '#111'
       },
       series: [
         {
@@ -466,6 +466,7 @@ async function graficoProms(progresos) {
 }
 
 cargarPlanHoy();
+
 
 
 
