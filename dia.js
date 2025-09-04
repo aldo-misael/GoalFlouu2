@@ -418,8 +418,8 @@ function obtenerFechasSemanaHasta(fechaReferencia) {
 }
 
 async function graficoProms(progresos) {
-  const dias = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado',
-    'Domingo'];
+  const dias = ['Lun', 'Mar', 'Mier', 'Jue', 'Vier', 'Sab',
+    'Dom'];
 
   try {
     // Mostrar gráfico
@@ -466,6 +466,7 @@ async function graficoProms(progresos) {
 }
 
 cargarPlanHoy();
+
 
 
 
