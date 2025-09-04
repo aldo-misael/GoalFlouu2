@@ -461,10 +461,11 @@ async function graficoProms(progresos) {
 
   } catch (error) {
     console.error("Error al cargar datos para gráfico:", error);
-    Swal.fire("Error", "No se pudieron cargar los datos para el gráfico", "error");
+    alert("No se pudieron cargar los datos para el gráfico");
   }
 }
 
 cargarPlanHoy();
+
 
 
