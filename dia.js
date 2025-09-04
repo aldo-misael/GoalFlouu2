@@ -87,7 +87,7 @@ async function cargarPlanHoy() {
     registroInit.dormir = { d: false };
     await setDoc(checkRef, registroInit);
   }
-  
+
   // ===== Mostrar solo la comida correspondiente a la hora actual =====
   let comidaMostrada = null;
   for (let i = 0; i < dietaHoy.length; i++) {
@@ -172,13 +172,16 @@ async function cargarPlanHoy() {
       let progresoDiario = calcularProgresoDiario(checks);
 
       let fechas = obtenerFechasSemanaHasta(fecha);
-      let progresoSemanal = await calcularProgresoSemanal(fechas);
-    
+      let [progresoSemanal,progresos] = await calcularProgresoSemanal(fechas);
+
       reproducirHasta("lottie-1", progresoDiario);
       console.log(progresoSemanal);
       reproducirHasta("lottie-2", progresoSemanal);
+      graficoProms(progresos);
       //reproducirLottieHasta("lottie-3", "carga.json", 100);
     }
+
+
   }
 
   //PLAN DEL DIA-
@@ -273,7 +276,7 @@ document.getElementById("guardar-checks").addEventListener("click", async () => 
   // Solo actualizar item creatina
   const kInput = document.getElementById("k");
   if (kInput) updates["creatina.k"] = kInput.checked;
-  
+
   // Solo actualizar item dormir
   const dInput = document.getElementById("d");
   if (dInput) updates["dormir.d"] = dInput.checked;
@@ -288,7 +291,7 @@ document.getElementById("guardar-checks").addEventListener("click", async () => 
   if (checkS.exists()) {
     const checks = checkS.data();
     let progresoDiario = calcularProgresoDiario(checks);
-    
+
     let fechas = obtenerFechasSemanaHasta(fecha);
     let progresoSemanal = await calcularProgresoSemanal(fechas);
 
@@ -338,9 +341,9 @@ function calcularProgresoDiario(checks) {
   let progresoDiario = 0;
   let progreso = 0;
   let tareas = 0;
-  
+
   //Calculo de ejercicio 30%
-  if(checks.ejercicios.ej) progresoDiario += 30;
+  if (checks.ejercicios.ej) progresoDiario += 30;
 
   //Calculo de comidas  25%
   for (let i = 0; i <= 6; i++) {
@@ -348,12 +351,12 @@ function calcularProgresoDiario(checks) {
   }
   progreso = (tareas * 25) / 6;
   progresoDiario += progreso;
-  
+
   //Calculo de dormir 20%
-  if(checks.dormir.d) progresoDiario += 20;
+  if (checks.dormir.d) progresoDiario += 20;
 
   //Calculo de creatina 7%
-  if(checks.creatina.k) progresoDiario += 7;
+  if (checks.creatina.k) progresoDiario += 7;
 
   //Calculo de hidratacion 10%
   tareas = 0;
@@ -364,17 +367,19 @@ function calcularProgresoDiario(checks) {
   progresoDiario += progreso;
 
   //Calculo de visualizaciones 5%
-  if(checks.pnl[`p${1}`]) progresoDiario += 2.5;
-  if(checks.pnl[`p${2}`]) progresoDiario += 2.5;
-  
+  if (checks.pnl[`p${1}`]) progresoDiario += 2.5;
+  if (checks.pnl[`p${2}`]) progresoDiario += 2.5;
+
   //Calculo de recuperacion 3%
-  if(checks.ejercicios.rec) progresoDiario += 3;
+  if (checks.ejercicios.rec) progresoDiario += 3;
 
   return progresoDiario;
 }
 
 async function calcularProgresoSemanal(fechas) {
   let progresoSemanal = 0;
+  let progresos = new Array(7).fill(0);
+
   for (let i = 0; i < fechas.length; i++) {
     console.log(fechas[i]);
     const checkRef = doc(db, "checkeos", fechas[i]);
@@ -382,12 +387,13 @@ async function calcularProgresoSemanal(fechas) {
     if (checkS.exists()) {
       const checks = checkS.data();
       let progresoDiario = calcularProgresoDiario(checks);
+      progresos[i] = progresoDiario;
       console.log(progresoDiario);
       progresoSemanal += progresoDiario;
     }
   }
-  progresoSemanal = progresoSemanal/fechas.length;
-  return progresoSemanal;
+  progresoSemanal = progresoSemanal / fechas.length;
+  return [progresoSemanal,progresos];
 }
 
 function obtenerFechasSemanaHasta(fechaReferencia) {
@@ -397,7 +403,7 @@ function obtenerFechasSemanaHasta(fechaReferencia) {
 
   const fechas = [];
 
-  for (let i = 0; i <= diasDesdeLunes+1; i++) {
+  for (let i = 0; i <= diasDesdeLunes + 1; i++) {
     const f = new Date(fechaBase); // Clon en cada iteración
     f.setDate(fechaBase.getDate() - diasDesdeLunes + i);
 
@@ -409,6 +415,54 @@ function obtenerFechasSemanaHasta(fechaReferencia) {
   }
 
   return fechas;
+}
+
+async function graficoProms(progresos) {
+  const dias = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado',
+    'Domingo'];
+
+  try {
+    // Mostrar gráfico
+    const options = {
+      chart: {
+        type: 'area',
+        background: '#000'
+      },
+      series: [
+        {
+          name: 'Progresos',
+          data: progresos
+        }
+      ],
+      xaxis: {
+        categories: dias,
+        labels: {
+          style: {
+            colors: '#FFF'
+          }
+        }
+      },
+      yaxis: {
+        labels: {
+          style: {
+            colors: '#FFF'
+          }
+        }
+      },
+      legend: {
+        labels: {
+          colors: '#FFF'
+        }
+      }
+    };
+
+    const chart = new ApexCharts(document.querySelector("#chart"), options);
+    chart.render();
+
+  } catch (error) {
+    console.error("Error al cargar datos para gráfico:", error);
+    Swal.fire("Error", "No se pudieron cargar los datos para el gráfico", "error");
+  }
 }
 
 cargarPlanHoy();
