@@ -378,7 +378,7 @@ function calcularProgresoDiario(checks) {
 
 async function calcularProgresoSemanal(fechas) {
   let progresoSemanal = 0;
-  let progresos = new Array(7).fill(0);
+  let progresos = new Array(8).fill(0);
 
   for (let i = 0; i < fechas.length; i++) {
     console.log(fechas[i]);
@@ -387,7 +387,7 @@ async function calcularProgresoSemanal(fechas) {
     if (checkS.exists()) {
       const checks = checkS.data();
       let progresoDiario = calcularProgresoDiario(checks);
-      progresos[i] = progresoDiario;
+      progresos[i+1] = progresoDiario;
       console.log(progresoDiario);
       progresoSemanal += progresoDiario;
     }
@@ -418,7 +418,7 @@ function obtenerFechasSemanaHasta(fechaReferencia) {
 }
 
 async function graficoProms(progresos) {
-  const dias = ['Lun', 'Mar', 'Mier', 'Jue', 'Vier', 'Sab',
+  const dias = ['', 'Lun', 'Mar', 'Mier', 'Jue', 'Vier', 'Sab',
     'Dom'];
 
   try {
@@ -481,6 +481,7 @@ async function graficoProms(progresos) {
 }
 
 cargarPlanHoy();
+
 
 
 
