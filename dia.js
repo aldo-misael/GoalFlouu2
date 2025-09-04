@@ -453,6 +453,20 @@ async function graficoProms(progresos) {
         labels: {
           colors: '#FFF'
         }
+      },
+      chart: {
+        toolbar: {
+          show: false // Oculta el menú de herramientas (descarga, zoom, etc.)
+        }
+      },
+      tooltip: {
+        enabled: false // Desactiva los tooltips al pasar el mouse
+      },
+      legend: {
+        show: false // Oculta la leyenda
+      },
+      grid: {
+        borderColor: 'rgba(255,255,255,0.05)' // Líneas horizontales tenues sobre fondo #111
       }
     };
 
@@ -466,6 +480,7 @@ async function graficoProms(progresos) {
 }
 
 cargarPlanHoy();
+
 
 
 
