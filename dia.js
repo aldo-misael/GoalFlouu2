@@ -426,7 +426,10 @@ async function graficoProms(progresos) {
     const options = {
       chart: {
         type: 'area',
-        background: '#111'
+        background: '#111',
+        toolbar: {
+          show: false // Oculta el menú de herramientas (descarga, zoom, etc.)
+        }
       },
       series: [
         {
@@ -440,6 +443,9 @@ async function graficoProms(progresos) {
           style: {
             colors: '#FFF'
           }
+        },
+        axisBorder: {
+          color: 'rgba(255, 255, 255, 0.5)'
         }
       },
       yaxis: {
@@ -452,11 +458,6 @@ async function graficoProms(progresos) {
       legend: {
         labels: {
           colors: '#FFF'
-        }
-      },
-      chart: {
-        toolbar: {
-          show: false // Oculta el menú de herramientas (descarga, zoom, etc.)
         }
       },
       tooltip: {
@@ -480,6 +481,7 @@ async function graficoProms(progresos) {
 }
 
 cargarPlanHoy();
+
 
 
 
