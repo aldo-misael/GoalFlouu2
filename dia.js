@@ -25,6 +25,10 @@ function horaActual() {
 async function cargarPlanHoy() {
   const horaNow = horaActual();
 
+  // ===== CREA LOTTIES ======
+  crearLottie("lottie-1", "carga2.json");
+  crearLottie("lottie-2", "carga1.json");
+
   // ===== DIETA =====
   const dietaRef = doc(db, "dieta", "semana1");
   const dietaSnap = await getDoc(dietaRef);
@@ -83,25 +87,7 @@ async function cargarPlanHoy() {
     registroInit.dormir = { d: false };
     await setDoc(checkRef, registroInit);
   }
-
-  //Lottie progreso
-  const checkS = await getDoc(checkRef);
-  if (checkS.exists()) {
-    const checks = checkS.data();
-    let progresoDiario = calcularProgresoDiario(checks);
-
-    let fechas = obtenerFechasSemanaHasta(fecha);
-    let progresoSemanal = await calcularProgresoSemanal(fechas);
-
-    crearLottie("lottie-1", "carga2.json");
-    reproducirHasta("lottie-1", progresoDiario);
-    console.log(progresoSemanal);
-
-    crearLottie("lottie-2", "carga1.json");
-    reproducirHasta("lottie-2", progresoSemanal);
-    //reproducirLottieHasta("lottie-3", "carga.json", 100);
-  }
-
+  
   // ===== Mostrar solo la comida correspondiente a la hora actual =====
   let comidaMostrada = null;
   for (let i = 0; i < dietaHoy.length; i++) {
@@ -178,6 +164,21 @@ async function cargarPlanHoy() {
     if (document.getElementById("k")) document.getElementById("k").checked = checks.creatina.k || false;
     //dormir
     if (document.getElementById("d")) document.getElementById("d").checked = checks.dormir.d || false;
+
+    //Lottie progreso
+    const checkS = await getDoc(checkRef);
+    if (checkS.exists()) {
+      const checks = checkS.data();
+      let progresoDiario = calcularProgresoDiario(checks);
+
+      let fechas = obtenerFechasSemanaHasta(fecha);
+      let progresoSemanal = await calcularProgresoSemanal(fechas);
+    
+      reproducirHasta("lottie-1", progresoDiario);
+      console.log(progresoSemanal);
+      reproducirHasta("lottie-2", progresoSemanal);
+      //reproducirLottieHasta("lottie-3", "carga.json", 100);
+    }
   }
 
   //PLAN DEL DIA-
@@ -411,4 +412,5 @@ function obtenerFechasSemanaHasta(fechaReferencia) {
 }
 
 cargarPlanHoy();
+
 
