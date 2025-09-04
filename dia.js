@@ -293,10 +293,11 @@ document.getElementById("guardar-checks").addEventListener("click", async () => 
     let progresoDiario = calcularProgresoDiario(checks);
 
     let fechas = obtenerFechasSemanaHasta(fecha);
-    let progresoSemanal = await calcularProgresoSemanal(fechas);
+    let [progresoSemanal,progresos] = await calcularProgresoSemanal(fechas);
 
     reproducirHasta("lottie-1", progresoDiario);
     reproducirHasta("lottie-2", progresoSemanal);
+    graficoProms(progresos);
   }
 });
 
@@ -453,7 +454,8 @@ async function graficoProms(progresos) {
           style: {
             colors: '#FFF'
           }
-        }
+        },
+        show: false
       },
       legend: {
         labels: {
@@ -481,6 +483,7 @@ async function graficoProms(progresos) {
 }
 
 cargarPlanHoy();
+
 
 
 
