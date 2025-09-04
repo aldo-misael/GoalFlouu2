@@ -373,7 +373,7 @@ function calcularProgresoDiario(checks) {
   //Calculo de recuperacion 3%
   if (checks.ejercicios.rec) progresoDiario += 3;
 
-  return progresoDiario;
+  return Math.round(progresoDiario);
 }
 
 async function calcularProgresoSemanal(fechas) {
@@ -466,6 +466,7 @@ async function graficoProms(progresos) {
 }
 
 cargarPlanHoy();
+
 
 
 
