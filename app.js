@@ -26,12 +26,9 @@ onAuthStateChanged(auth, user => {
 
 // Función utilitaria: obtener día actual (1=lunes,...,7=domingo)
 export function getDiaSemana() {
-  const hoy = new Date();
-  // Ajustar a la zona horaria local
-  const localDate = new Date(hoy.getTime() - hoy.getTimezoneOffset() * 60000);
-
-  let day = localDate.getDay(); // 0=domingo,...6=sábado
-  return day === 0 ? 7 : day;   // Ajustar a 1-7 (lunes=1,...,domingo=7)
+  const hoy = new Date(); // Ya está en hora local
+  const day = hoy.getDay(); // 0=domingo,...6=sábado
+  return day === 0 ? 7 : day; // Ajustar a 1-7 (lunes=1,...,domingo=7)
 }
 
 // Fecha YYYY-MM-DD (hora local del usuario)
@@ -40,3 +37,4 @@ export function getFechaHoy() {
   const localISO = new Date(Date.now() - tzOffset).toISOString().split("T")[0];
   return localISO;
 }
+
