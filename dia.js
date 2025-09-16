@@ -178,6 +178,7 @@ async function cargarPlanHoy() {
       console.log(progresoSemanal);
       reproducirHasta("lottie-2", progresoSemanal);
       graficoProms(progresos);
+      updateProgress(daysElapsed('2025-08-18'));
       //reproducirLottieHasta("lottie-3", "carga.json", 100);
     }
 
@@ -482,14 +483,26 @@ async function graficoProms(progresos) {
   }
 }
 
+const totalDays = 365;
+function updateProgress(currentDay) {
+  const progressBar = document.getElementById('progressBar');
+  const progressText = document.getElementById('progressText');
+  const percentage = Math.min((currentDay / totalDays) * 100, 100);
+  progressBar.style.width = percentage + '%';
+  progressText.textContent = `Día ${currentDay} de ${totalDays}`;
+}
+
+function daysElapsed(startDateStr) {
+  const startDate = new Date(startDateStr); // formato: 'YYYY-MM-DD'
+  const today = new Date();
+
+  // Normaliza ambas fechas a medianoche para evitar errores por horas
+  startDate.setHours(0, 0, 0, 0);
+  today.setHours(0, 0, 0, 0);
+
+  const diffMs = today - startDate;
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  return diffDays;
+}
+
 cargarPlanHoy();
-
-
-
-
-
-
-
-
-
-
