@@ -1,5 +1,5 @@
 import { db, getDiaSemana, getFechaHoy } from "./app.js";
-import { doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-firestore.js";
+import { doc, getDoc, setDoc, updateDoc, collection, getDocs, deleteField } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-firestore.js";
 
 const dia = getDiaSemana(); // 1=Lunes, 2=Martes, etc.
 const fecha = getFechaHoy(); // yyyy-mm-dd
@@ -28,6 +28,7 @@ async function cargarPlanHoy() {
   // ===== CREA LOTTIES ======
   crearLottie("lottie-1", "carga2.json");
   crearLottie("lottie-2", "carga1.json");
+  crearLottie("lottie-h", "hydration.json");
 
   // ===== DIETA =====
   const dietaRef = doc(db, "dieta", "semana1");
@@ -72,16 +73,22 @@ async function cargarPlanHoy() {
   const checkRef = doc(db, "checkeos", fecha);
   const checkSnap = await getDoc(checkRef);
   if (!checkSnap.exists()) {
-    let registroInit = { comidas: {}, ejercicios: {}, agua: {}, pnl: {}, creatina: {}, dormir: {} };
+    let registroInit = {
+      comidas: {},
+      ejercicios: {},
+      agua: {},
+      pnl: {},
+      creatina: {},
+      dormir: {},
+      pd: 0
+    };
     dietaHoy.forEach((cObj, i) => {
       registroInit.comidas[`c${i + 1}`] = false;
     });
     registroInit.ejercicios = { ej: false, rec: false };
     registroInit.agua = { vs1: false, vs2: false, vs3: false, vs4: false, vs5: false, vs6: false };
-    console.log("Entro");
     pnlHoy.forEach((cObj, i) => {
       registroInit.pnl[`p${i + 1}`] = false;
-      console.log(registroInit.pnl[`p${i + 1}`]);
     });
     registroInit.creatina = { k: false };
     registroInit.dormir = { d: false };
@@ -168,15 +175,17 @@ async function cargarPlanHoy() {
     //Lottie progreso
     const checkS = await getDoc(checkRef);
     if (checkS.exists()) {
-      const checks = checkS.data();
-      let progresoDiario = calcularProgresoDiario(checks);
+      const data = checkS.data();
+      let progresoDiario = data.pd;
 
       let fechas = obtenerFechasSemanaHasta(fecha);
-      let [progresoSemanal,progresos] = await calcularProgresoSemanal(fechas);
+      let [progresoSemanal, progresos] = await calcularProgresoSemanal(fechas);
+      let progresoHid = calcularHidratacion(data.agua);
 
       reproducirHasta("lottie-1", progresoDiario);
-      console.log(progresoSemanal);
       reproducirHasta("lottie-2", progresoSemanal);
+      reproducirHasta("lottie-h", progresoHid*20, 1, 1.5);
+      document.getElementById("litros").textContent = progresoHid*0.5 + "L";
       graficoProms(progresos);
       updateProgress(daysElapsed('2025-08-18'));
       //reproducirLottieHasta("lottie-3", "carga.json", 100);
@@ -292,9 +301,10 @@ document.getElementById("guardar-checks").addEventListener("click", async () => 
   if (checkS.exists()) {
     const checks = checkS.data();
     let progresoDiario = calcularProgresoDiario(checks);
+    await setDoc(checkRef, { pd: progresoDiario }, { merge: true });
 
     let fechas = obtenerFechasSemanaHasta(fecha);
-    let [progresoSemanal,progresos] = await calcularProgresoSemanal(fechas);
+    let [progresoSemanal, progresos] = await calcularProgresoSemanal(fechas);
 
     reproducirHasta("lottie-1", progresoDiario);
     reproducirHasta("lottie-2", progresoSemanal);
@@ -317,16 +327,16 @@ function crearLottie(containerId, jsonPath) {
   lottieInstances[containerId] = animation;
 }
 
-function reproducirHasta(containerId, porcentaje) {
+function reproducirHasta(containerId, porcentaje, speed = 2, f = 2.5) {
   const animation = lottieInstances[containerId];
   if (!animation) {
     console.warn(`No se encontró animación para ${containerId}`);
     return;
   }
 
-  const targetFrame = porcentaje * 2.5;
+  const targetFrame = porcentaje * f;
   animation.stop();
-  animation.setSpeed(2);
+  animation.setSpeed(speed);
   animation.play();
 
   const detener = (e) => {
@@ -383,19 +393,26 @@ async function calcularProgresoSemanal(fechas) {
   let progresos = new Array(8).fill(0);
 
   for (let i = 0; i < fechas.length; i++) {
-    console.log(fechas[i]);
     const checkRef = doc(db, "checkeos", fechas[i]);
     const checkS = await getDoc(checkRef);
     if (checkS.exists()) {
-      const checks = checkS.data();
-      let progresoDiario = calcularProgresoDiario(checks);
-      progresos[i+1] = progresoDiario;
-      console.log(progresoDiario);
+      let progresoDiario = checkS.data().pd;
+      progresos[i + 1] = progresoDiario;
       progresoSemanal += progresoDiario;
     }
   }
   progresoSemanal = progresoSemanal / fechas.length;
-  return [progresoSemanal,progresos];
+  return [progresoSemanal, progresos];
+}
+
+function calcularHidratacion(agua) {
+  let suma = 0;
+  for (let key in agua) {
+    if (agua[key] === true) {
+      suma++;
+    }
+  }
+  return suma;
 }
 
 function obtenerFechasSemanaHasta(fechaReferencia) {
@@ -431,6 +448,9 @@ async function graficoProms(progresos) {
         background: '#111',
         toolbar: {
           show: false // Oculta el menú de herramientas (descarga, zoom, etc.)
+        },
+        zoom: {
+          enabled: false // 🔒 Desactiva el zoom
         }
       },
       series: [
