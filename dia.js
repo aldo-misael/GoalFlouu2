@@ -91,7 +91,7 @@ async function cargarPlanHoy() {
       registroInit.pnl[`p${i + 1}`] = false;
     });
     registroInit.creatina = { k: false };
-    registroInit.dormir = { d: false };
+    registroInit.dormir = { d: false, dv: 0.0 };
     await setDoc(checkRef, registroInit);
   }
 
@@ -145,7 +145,13 @@ async function cargarPlanHoy() {
 
   // ===== Mostrar dormir todo el día =====
   let htmlD = "<h3>Dormir</h3>";
-  htmlD += `<label><input type="checkbox" id="d"> Dormir 7 horas al día.</label>`;
+  htmlD += `<label>
+  <input type="checkbox" id="d"> Dormir 7 horas al día.&nbsp;&nbsp;&nbsp;Horas:
+  <input type="number" id="dv" name="horasDormidas"
+       min="0" max="24" step="0.01" placeholder="h.mm"
+       class="input-tabla">
+  </label><br>`;
+
   dormirDiv.innerHTML = htmlD;
 
 
@@ -157,11 +163,12 @@ async function cargarPlanHoy() {
     if (comidaMostrada) {
       const box = document.getElementById(`c${comidaMostrada.index}`);
       if (box) box.checked = checks.comidas[`c${comidaMostrada.index}`] || false;
+      if (document.getElementById(`vs${comidaMostrada.index}`)) document.getElementById(`vs${comidaMostrada.index}`).checked = checks.agua[`vs${comidaMostrada.index}`] || false;
     }
     //ejercicio
     if (ejHoy && document.getElementById("ej")) document.getElementById("ej").checked = checks.ejercicios.ej || false;
     if (ejHoy && document.getElementById("rec")) document.getElementById("rec").checked = checks.ejercicios.rec || false;
-    if (document.getElementById(`vs${comidaMostrada.index}`)) document.getElementById(`vs${comidaMostrada.index}`).checked = checks.agua[`vs${comidaMostrada.index}`] || false;
+    
     //visualizacion
     if (tecnicaMostrada) {
       const box = document.getElementById(`p${tecnicaMostrada.index}`);
@@ -171,6 +178,7 @@ async function cargarPlanHoy() {
     if (document.getElementById("k")) document.getElementById("k").checked = checks.creatina.k || false;
     //dormir
     if (document.getElementById("d")) document.getElementById("d").checked = checks.dormir.d || false;
+    if (document.getElementById("dv")) document.getElementById("dv").value = checks.dormir.dv || "";
 
     //Lottie progreso
     const checkS = await getDoc(checkRef);
@@ -184,14 +192,12 @@ async function cargarPlanHoy() {
 
       reproducirHasta("lottie-1", progresoDiario);
       reproducirHasta("lottie-2", progresoSemanal);
-      reproducirHasta("lottie-h", progresoHid*20, 1, 1.5);
-      document.getElementById("litros").textContent = progresoHid*0.5 + "L";
+      reproducirHasta("lottie-h", progresoHid * 20, 1, 1.5);
+      document.getElementById("litros").textContent = progresoHid * 0.5 + "L";
       graficoProms(progresos);
       updateProgress(daysElapsed('2025-08-18'));
       //reproducirLottieHasta("lottie-3", "carga.json", 100);
     }
-
-
   }
 
   //PLAN DEL DIA-
@@ -233,10 +239,9 @@ async function cargarPlanHoy() {
     // ===== Mostrar Dormir del día de hoy =====
     let htmlD2 = "<h3>Dormir</h3>";
     checkEmoji = obtenerCheckEmoji(horaMenosUna, "00:00", checks.dormir.d);
-    htmlD2 += `<label>🔸 Dormir 7 horas al día. ${checkEmoji}</ label>`;
+    htmlD2 += `<label>🔸 Dormir 7 horas al día. Has dormido: ${checks.dormir.dv}[hr]. ${checkEmoji}</ label>`;
     dormirHoyDiv.innerHTML = htmlD2;
-
-  }
+  }else alert("checkSnap2.exists. No existe. Revisar condición ❌");
 }
 
 function obtenerCheckEmoji(horaActual, horaObjetivo, estadoEjercicio) {
@@ -255,7 +260,6 @@ document.getElementById("guardar-checks").addEventListener("click", async () => 
 
   // Solo actualizar las comidas visibles
   const comidasInputs = comidasDiv.querySelectorAll("input[type='checkbox']");
-  const vsInput = document.getElementById("vs");
 
   comidasInputs.forEach(input => {
     if (input.id.startsWith('vs')) {
@@ -289,7 +293,15 @@ document.getElementById("guardar-checks").addEventListener("click", async () => 
 
   // Solo actualizar item dormir
   const dInput = document.getElementById("d");
-  if (dInput) updates["dormir.d"] = dInput.checked;
+  const dvInput = document.getElementById("dv");
+  if (dvInput.value > 0) {
+    updates["dormir.d"] = true;
+    dInput.checked = true;
+  } else {
+    updates["dormir.d"] = false;
+    dInput.checked = false;
+  }
+  if (dvInput) updates["dormir.dv"] = Math.max(0, dvInput.value);
 
   // 🔥 Esto actualiza SOLO las propiedades específicas
   await updateDoc(checkRef, updates);
@@ -305,9 +317,12 @@ document.getElementById("guardar-checks").addEventListener("click", async () => 
 
     let fechas = obtenerFechasSemanaHasta(fecha);
     let [progresoSemanal, progresos] = await calcularProgresoSemanal(fechas);
+    let progresoHid = calcularHidratacion(checks.agua);
 
     reproducirHasta("lottie-1", progresoDiario);
     reproducirHasta("lottie-2", progresoSemanal);
+    reproducirHasta("lottie-h", progresoHid * 20, 1, 1.5);
+    document.getElementById("litros").textContent = progresoHid * 0.5 + "L";
     graficoProms(progresos);
   }
 });
@@ -365,7 +380,11 @@ function calcularProgresoDiario(checks) {
   progresoDiario += progreso;
 
   //Calculo de dormir 20%
-  if (checks.dormir.d) progresoDiario += 20;
+  const horas = Math.floor(checks.dormir.dv);
+  const minutos = (checks.dormir.dv - horas) * 100;
+  const totalHoras = horas + (minutos / 60);
+  const horasDormidas = Math.min(totalHoras, 7);
+  if (checks.dormir.d) progresoDiario += ((horasDormidas * 20) / 7);
 
   //Calculo de creatina 7%
   if (checks.creatina.k) progresoDiario += 7;
@@ -416,13 +435,14 @@ function calcularHidratacion(agua) {
 }
 
 function obtenerFechasSemanaHasta(fechaReferencia) {
-  const fechaBase = new Date(fechaReferencia);
+  const [año, mes, día] = fechaReferencia.split("-").map(Number);
+  const fechaBase = new Date(año, mes - 1, día);
   const diaSemana = fechaBase.getDay(); // 0 = domingo, 1 = lunes, ..., 6 = sábado
   const diasDesdeLunes = diaSemana === 0 ? 6 : diaSemana - 1;
 
   const fechas = [];
 
-  for (let i = 0; i <= diasDesdeLunes + 1; i++) {
+  for (let i = 0; i <= diasDesdeLunes; i++) {
     const f = new Date(fechaBase); // Clon en cada iteración
     f.setDate(fechaBase.getDate() - diasDesdeLunes + i);
 
@@ -432,13 +452,11 @@ function obtenerFechasSemanaHasta(fechaReferencia) {
 
     fechas.push(`${yyyy}-${mm}-${dd}`);
   }
-
   return fechas;
 }
 
 async function graficoProms(progresos) {
-  const dias = ['', 'Lun', 'Mar', 'Mier', 'Jue', 'Vier', 'Sab',
-    'Dom'];
+  const dias = ['', 'Lun', 'Mar', 'Mier', 'Jue', 'Vier', 'Sab', 'Dom'];
 
   try {
     // Mostrar gráfico
