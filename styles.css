@@ -115,7 +115,7 @@ td input[type="text"]:focus {
 }
 
 input[type="text"],
-input[type="number"]{
+input[type="number"] {
   width: 90%;
   padding: 6px 10px;
   border: 1px solid #444;
@@ -124,8 +124,9 @@ input[type="number"]{
   color: #fff;
   transition: 0.3s;
 }
-input[type="number"]{
-  width: 10%;
+
+input[type="number"] {
+  width: 15%;
 }
 
 input[type="number"]::-webkit-inner-spin-button,
@@ -196,7 +197,13 @@ input[type="checkbox"] {
 }
 
 
-#plan-hoy, #plan-dia, #progreso-semanal, #progreso, #progreso2, #hidratacion {
+#plan-hoy,
+#plan-dia,
+#progreso-semanal,
+#progreso,
+#progreso2,
+#hidratacion,
+#mediciones {
   background-color: #111;
   /* fondo oscuro */
   padding: 20px;
@@ -206,27 +213,35 @@ input[type="checkbox"] {
   margin: 20px auto;
 }
 
-#plan-hoy h2, #plan-dia h2, #progreso-semanal {
+#plan-hoy h2,
+#plan-dia h2,
+#progreso-semanal,
+#mediciones {
   margin-bottom: 20px;
   text-align: left;
   font-family: 'Arial', sans-serif;
   /* o la fuente que prefieras */
 }
 
-#plan-hoy div, #plan-dia div, #progreso-semanal div {
+#plan-hoy div,
+#plan-dia div,
+#progreso-semanal div,
+#mediciones div {
   margin-bottom: 20px;
   /* espacio entre comidas y ejercicios */
   color: #fff;
 }
 
-#plan-hoy label, #plan-dia label {
+#plan-hoy label,
+#plan-dia label {
   display: block;
   margin-bottom: 10px;
   /* espacio entre cada checkbox */
   font-size: 1rem;
 }
 
-#plan-hoy button, #plan-dia button {
+#plan-hoy button,
+#plan-dia button {
   display: block;
   margin: 20px auto 0 auto;
   padding: 10px 20px;
@@ -238,7 +253,8 @@ input[type="checkbox"] {
   cursor: pointer;
 }
 
-#plan-hoy button:hover, #plan-dia button:hover {
+#plan-hoy button:hover,
+#plan-dia button:hover {
   opacity: 0.9;
 }
 
@@ -250,16 +266,19 @@ input[type="checkbox"] {
 }
 
 #progreso {
-  flex: 3; /* ocupa 3 partes del espacio */
+  flex: 3;
+  /* ocupa 3 partes del espacio */
   margin: 0;
 }
 
 #hidratacion {
-  flex: 1; /* ocupa 1 parte del espacio */
+  flex: 1;
+  /* ocupa 1 parte del espacio */
   margin: 0;
 }
 
-#progreso, #hidratacion {
+#progreso,
+#hidratacion {
   display: flex;
   justify-content: space-around;
   align-items: center;
@@ -288,7 +307,8 @@ input[type="checkbox"] {
 .progress-container {
   width: 100%;
   max-width: 600px;
-  background-color: rgba(255, 255, 255, 0.1); /* semi-transparente para que se mezcle con tu fondo */
+  background-color: rgba(255, 255, 255, 0.1);
+  /* semi-transparente para que se mezcle con tu fondo */
   border-radius: 8px;
   overflow: hidden;
   margin: 1em auto;
@@ -296,7 +316,8 @@ input[type="checkbox"] {
 
 .progress-bar {
   height: 24px;
-  background-color: #FFD700; /* amarillo dorado */
+  background-color: #FFD700;
+  /* amarillo dorado */
   width: 0%;
   transition: width 0.4s ease;
 }
@@ -314,4 +335,45 @@ input[type="checkbox"] {
   font-size: 0.95em;
   opacity: 0.8;
   color: #FFD700;
+}
+
+
+#mediciones {
+  text-align: center;
+  padding: 20px;
+}
+
+.mediciones-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  /* Espacio entre inputs y botón */
+}
+
+.mediv {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.input-tabla {
+  padding: 5px;
+  width: auto;
+  min-width: 150px;
+  flex-grow: 1;
+}
+
+.med-label {
+  font-weight: bold;
+}
+
+#guardar-med {
+  display: block;
+  margin: 0 auto;
+  padding: 8px 16px;
+  font-size: 16px;
+  cursor: pointer;
 }

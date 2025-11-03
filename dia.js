@@ -80,6 +80,7 @@ async function cargarPlanHoy() {
       pnl: {},
       creatina: {},
       dormir: {},
+      mediciones: {},
       pd: 0
     };
     dietaHoy.forEach((cObj, i) => {
@@ -92,6 +93,7 @@ async function cargarPlanHoy() {
     });
     registroInit.creatina = { k: false };
     registroInit.dormir = { d: false, dv: 0.0 };
+    registroInit.mediciones = { ps: 0.0, cn: 0.0 };
     await setDoc(checkRef, registroInit);
   }
 
@@ -179,6 +181,9 @@ async function cargarPlanHoy() {
     //dormir
     if (document.getElementById("d")) document.getElementById("d").checked = checks.dormir.d || false;
     if (document.getElementById("dv")) document.getElementById("dv").value = checks.dormir.dv || "";
+    //mediciones
+    if (document.getElementById("ps")) document.getElementById("ps").value = checks.mediciones.ps || "";
+    if (document.getElementById("cn")) document.getElementById("cn").value = checks.mediciones.cn || "";
 
     //Lottie progreso
     const checkS = await getDoc(checkRef);
@@ -302,7 +307,7 @@ document.getElementById("guardar-checks").addEventListener("click", async () => 
     dInput.checked = false;
   }
   if (dvInput) updates["dormir.dv"] = Math.max(0, dvInput.value);
-
+  
   // 🔥 Esto actualiza SOLO las propiedades específicas
   await updateDoc(checkRef, updates);
 
@@ -325,6 +330,28 @@ document.getElementById("guardar-checks").addEventListener("click", async () => 
     document.getElementById("litros").textContent = progresoHid * 0.5 + "L";
     graficoProms(progresos);
   }
+});
+
+// ===== Guardar mediciones =====
+document.getElementById("guardar-med").addEventListener("click", async () => {
+  const checkRef = doc(db, "checkeos", fecha);
+  const checkSnap = await getDoc(checkRef);
+  if (!checkSnap.exists()) return;
+
+  let updates = {};
+
+  // Actualizar mediciones
+  const psInput = document.getElementById("ps");
+  const cnInput = document.getElementById("cn");
+  if (psInput.value > 0) updates["mediciones.ps"] = psInput.value;
+  else alert("Error: Coloca un valor mayor a 0");
+  if (cnInput.value > 0) updates["mediciones.cn"] = cnInput.value;
+  else alert("Error: Coloca un valor mayor a 0");
+  
+  // 🔥 Esto actualiza SOLO las propiedades específicas
+  await updateDoc(checkRef, updates);
+
+  alert("Progreso guardado ✅");
 });
 
 const lottieInstances = {};
