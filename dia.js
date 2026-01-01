@@ -200,7 +200,7 @@ async function cargarPlanHoy() {
       reproducirHasta("lottie-h", progresoHid * 20, 1, 1.5);
       document.getElementById("litros").textContent = progresoHid * 0.5 + "L";
       graficoProms(progresos);
-      updateProgress(daysElapsed('2025-08-18'));
+      updateProgress(daysElapsed('2026-01-01'));
       //reproducirLottieHasta("lottie-3", "carga.json", 100);
     }
   }
@@ -569,5 +569,6 @@ function daysElapsed(startDateStr) {
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
   return diffDays;
 }
+
 
 cargarPlanHoy();
